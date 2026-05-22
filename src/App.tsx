@@ -1,121 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
-
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-16">
+      <div className="max-w-2xl w-full text-center space-y-8">
+        {/* Pre-headline chip — signals progress */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cream-100 border border-gold-400/40 text-charcoal-light text-sm font-medium">
+          <span className="text-gold-500">✦</span>
+          <span>Phase 1 complete — landing page shipping next</span>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
+        {/* Headline — Fraunces serif, navy */}
+        <h1 className="text-6xl md:text-7xl font-display font-semibold text-navy-800 leading-[1.05] tracking-tight">
+          Easy Scholarship
+        </h1>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {/* Subhead — value prop */}
+        <p className="text-lg md:text-xl text-charcoal-light leading-relaxed max-w-xl mx-auto">
+          Unlock the hidden scholarships you qualify for. Track every
+          deadline.{" "}
+          <span className="text-navy-800 font-medium">
+            Win more money for college.
+          </span>
+        </p>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        {/* CTA group — gold gradient primary, navy secondary */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+          <button
+            type="button"
+            className="group bg-gradient-to-b from-gold-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 text-navy-800 font-semibold px-8 py-4 rounded-xl shadow-lg shadow-gold-500/25 hover:shadow-xl hover:shadow-gold-500/35 hover:scale-[1.02] transition-all duration-200"
+          >
+            Get early access
+            <span className="inline-block ml-2 transition-transform group-hover:translate-x-0.5">
+              →
+            </span>
+          </button>
+          <a
+            href="https://github.com/ShumpZeke/EasyScholarship"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-navy-800 font-medium underline-offset-4 hover:underline"
+          >
+            View on GitHub
+          </a>
+        </div>
+
+        {/* Loss-aversion anchor */}
+        <p className="text-sm text-charcoal-light pt-12 tabular">
+          $100M+ in scholarships go unclaimed every year. Don't let yours.
+        </p>
+      </div>
+    </main>
   )
 }
 
