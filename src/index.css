@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ───────────────────────────────────────────────────────────────
- * SCHOLARSHIPAI — PSYCHOLOGY-DRIVEN DESIGN SYSTEM
+ * EASY SCHOLARSHIP — PSYCHOLOGY-DRIVEN DESIGN SYSTEM
  * Every color and font choice maps to a documented psychological
  * trigger. See the master spec for full rationale.
  * ─────────────────────────────────────────────────────────────── */
@@ -51,7 +51,7 @@
 }
 
 /* shadcn semantic tokens — point at our brand colors so Button, Card,
- * Popover, etc. inherit the ScholarshipAI palette automatically. */
+ * Popover, etc. inherit the Easy Scholarship palette automatically. */
 @theme inline {
   --font-sans: var(--font-body);
   --font-serif: var(--font-display);

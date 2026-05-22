@@ -1,73 +1,78 @@
-# React + TypeScript + Vite
+# Easy Scholarship
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Unlock the hidden scholarships you qualify for. Track every deadline. Win more money for college.
 
-Currently, two official plugins are available:
+AI-powered scholarship discovery and application tracker for students. Built to make it possible for one student to credibly apply to 50+ scholarships in the time it would normally take to apply to 5.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- **Frontend:** Vite + React 19 + TypeScript (strict)
+- **Styling:** Tailwind v4 + shadcn/ui + Framer Motion
+- **Backend:** Supabase (Postgres, auth, storage, realtime)
+- **AI:** Groq SDK (llama-3.3-70b-versatile)
+- **Hosting:** Vercel
+- **Forms:** React Hook Form + Zod
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Local development
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```powershell
+npm install
+npm run dev      # http://localhost:5173
+npm run build    # production build
+npm run lint     # eslint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Environment variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Copy `.env.example` to `.env.local` and fill in your keys:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+VITE_GROQ_API_KEY=
+```
+
+- **Supabase** keys are needed starting in Phase 3 (Authentication).
+- **Groq** key is needed starting in Phase 8 (AI Essay Generator).
+
+## Project structure
+
+```
+src/
+  components/
+    ui/             shadcn/ui primitives
+    landing/        landing page sections
+    dashboard/      authenticated dashboard widgets
+    profile/        multi-step profile builder
+    scholarships/   browse / detail / match score
+    applications/   kanban + tracker
+    essays/         AI essay generator + library
+    shared/         navbar, footer, loaders, money counters
+  pages/            top-level routes
+  lib/              supabase, groq, matching, animations
+  hooks/            useAuth, useProfile, etc.
+  types/            generated database types
+  contexts/         AuthContext, etc.
+
+scraper/            standalone Node scrapers for Phase 9
+  sources/          per-source extractors
+```
+
+## Build phases
+
+| # | Phase |
+|---|---|
+| 1 | Foundation (Vite + React + Tailwind + shadcn) |
+| 2 | Psychology-driven landing page |
+| 3 | Authentication (Supabase) |
+| 4 | Database schema + RLS |
+| 5 | Student profile builder |
+| 6 | Scholarship matching + browsing |
+| 7 | Application tracker + dashboard |
+| 8 | AI essay generator (Groq) |
+| 9 | Scholarship data collection (admin + scraper) |
+| 10 | Polish, mobile, deploy |
+
+## License
+
+Not yet decided — currently private use.
