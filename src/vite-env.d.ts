@@ -9,3 +9,7 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+// Side-effect CSS imports from @fontsource-variable/* packages
+declare module "@fontsource-variable/geist"
+declare module "@fontsource-variable/*"

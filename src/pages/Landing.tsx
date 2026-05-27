@@ -7,7 +7,7 @@ export default function Landing() {
       <nav className="px-6 py-4 flex items-center justify-between max-w-5xl mx-auto w-full">
         <Link to="/" className="inline-flex items-center gap-2 text-navy-800">
           <span className="text-gold-500 text-xl">✦</span>
-          <span className="font-display text-xl">Easy Scholarship</span>
+          <span className="font-display text-xl">Easy Scholarships</span>
         </Link>
         <div className="flex items-center gap-4">
           <Link
@@ -34,7 +34,7 @@ export default function Landing() {
           </div>
 
           <h1 className="text-6xl md:text-7xl font-display font-semibold text-navy-800 leading-[1.05] tracking-tight">
-            Easy Scholarship
+            Easy Scholarships
           </h1>
 
           <p className="text-lg md:text-xl text-charcoal-light leading-relaxed max-w-xl mx-auto">

@@ -4,54 +4,82 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ───────────────────────────────────────────────────────────────
- * EASY SCHOLARSHIP — PSYCHOLOGY-DRIVEN DESIGN SYSTEM
- * Every color and font choice maps to a documented psychological
- * trigger. See the master spec for full rationale.
+ * EASY SCHOLARSHIPS — PREMIUM DARK / GOLD DESIGN SYSTEM
+ * Black graphite background. Muted gold accents. Cream text.
+ * Tokens follow the master spec naming (--auth-*) plus a remap
+ * of the legacy palette names so existing JSX flips dark cleanly.
  * ─────────────────────────────────────────────────────────────── */
 
-/* Brand color tokens — these become Tailwind utilities:
- *   bg-gold-500, text-navy-800, border-cream-100, etc.
- */
 @theme {
-  /* GOLD — winning, achievement, gold medals */
+  /* ─── AUTH PALETTE (spec naming) ──────────────────────────── */
+  --color-auth-bg: #0d0d0c;
+  --color-auth-bg-soft: #151410;
+  --color-auth-bg-deep: #050505;
+  --color-auth-surface: #1b1a16;
+  --color-auth-surface-2: #221f1a;
+  --color-auth-glass: rgba(255, 245, 210, 0.06);
+  --color-auth-glass-strong: rgba(255, 245, 210, 0.1);
+  --color-auth-border: rgba(216, 180, 90, 0.22);
+  --color-auth-border-strong: rgba(216, 180, 90, 0.42);
+  --color-auth-gold: #d8b45a;
+  --color-auth-gold-soft: #f1d98a;
+  --color-auth-gold-deep: #9b762e;
+  --color-auth-gold-glow: rgba(216, 180, 90, 0.35);
+  --color-auth-text: #f8f1dc;
+  --color-auth-text-strong: #ffffff;
+  --color-auth-muted: #b9ae92;
+  --color-auth-muted-deep: #7a7160;
+  --color-auth-error: #f87171;
+  --color-auth-error-soft: rgba(248, 113, 113, 0.12);
+  --color-auth-success: #7dd3a8;
+  --color-auth-success-soft: rgba(125, 211, 168, 0.12);
+
+  /* ─── LEGACY NAMES REMAPPED to dark/gold ──────────────────── */
+  /* Existing JSX using bg-cream-50, text-navy-800, bg-gold-500
+     will automatically render in the new dark/gold theme. */
+
+  /* "cream" used to be light bg; now dark bg surfaces */
+  --color-cream-50: #0d0d0c;
+  --color-cream-100: #1b1a16;
+  --color-cream-200: #221f1a;
+
+  /* "navy" used to be primary brand; now cream-on-dark text */
+  --color-navy-600: #f1d98a;
+  --color-navy-700: #c9c2a8;
+  --color-navy-800: #f8f1dc;
+  --color-navy-900: #ffffff;
+
+  /* "gold" stays gold — but tuned to the muted spec value */
   --color-gold-300: #fcd34d;
-  --color-gold-400: #ffd700; /* "gold star" gold */
-  --color-gold-500: #f59e0b; /* primary CTA */
-  --color-gold-600: #d97706;
+  --color-gold-400: #f1d98a;
+  --color-gold-500: #d8b45a;
+  --color-gold-600: #9b762e;
 
-  /* ROYAL NAVY — Ivy League prestige, trust, intelligence */
-  --color-navy-600: #2563eb;
-  --color-navy-700: #1e40af;
-  --color-navy-800: #1e3a8a; /* primary brand */
-  --color-navy-900: #172554;
-
-  /* EMERALD — money, growth, "go" */
+  /* "emerald" stays for money/success indicators */
   --color-emerald-400: #34d399;
   --color-emerald-500: #10b981;
   --color-emerald-600: #059669;
 
-  /* CREAM — academic parchment, official documents */
-  --color-cream-50: #fffbeb; /* page background */
-  --color-cream-100: #fef3c7;
-  --color-cream-200: #fde68a;
+  /* "charcoal" was body text; now cream text on dark */
+  --color-charcoal: #f8f1dc;
+  --color-charcoal-light: #b9ae92;
 
-  /* CHARCOAL — sophisticated body text */
-  --color-charcoal: #1f2937;
-  --color-charcoal-light: #4b5563;
+  /* "urgent" red, slightly softened for dark bg */
+  --color-urgent-500: #f87171;
+  --color-urgent-600: #ef4444;
 
-  /* URGENT RED — deadline warnings, action required */
-  --color-urgent-500: #ef4444;
-  --color-urgent-600: #dc2626;
-
-  /* TYPOGRAPHY */
-  --font-display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
+  /* ─── TYPOGRAPHY ──────────────────────────────────────────── */
+  /* Geist Variable loaded locally via @fontsource-variable/geist in main.tsx.
+     Spec note: avoid Fraunces here — too academic for dark luxury-tech. */
+  --font-display:
+    "Geist Variable", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-body:
-    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    "Geist Variable", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "Courier New", monospace;
 }
 
-/* shadcn semantic tokens — point at our brand colors so Button, Card,
- * Popover, etc. inherit the Easy Scholarship palette automatically. */
+/* shadcn semantic tokens — point at dark/gold palette so Button, Card,
+ * Popover, etc. automatically inherit the Easy Scholarships look. */
 @theme inline {
   --font-sans: var(--font-body);
   --font-serif: var(--font-display);
@@ -83,27 +111,27 @@
 }
 
 :root {
-  /* Light theme values — point shadcn's structural variables at our palette */
-  --background: #fffbeb; /* cream-50 */
-  --foreground: #1f2937; /* charcoal */
-  --card: #ffffff;
-  --card-foreground: #1f2937;
-  --popover: #ffffff;
-  --popover-foreground: #1f2937;
-  --primary: #1e3a8a; /* navy-800 */
-  --primary-foreground: #fffbeb; /* cream-50 */
-  --secondary: #fef3c7; /* cream-100 */
-  --secondary-foreground: #1e3a8a;
-  --muted: #fef3c7;
-  --muted-foreground: #4b5563;
-  --accent: #f59e0b; /* gold-500 */
-  --accent-foreground: #1e3a8a;
-  --destructive: #ef4444; /* urgent-500 */
+  /* Dark theme by default — Easy Scholarships is dark-everywhere */
+  --background: #0d0d0c; /* auth-bg */
+  --foreground: #f8f1dc; /* auth-text */
+  --card: #1b1a16; /* auth-surface */
+  --card-foreground: #f8f1dc;
+  --popover: #1b1a16;
+  --popover-foreground: #f8f1dc;
+  --primary: #d8b45a; /* auth-gold */
+  --primary-foreground: #0d0d0c; /* dark text on gold button */
+  --secondary: #221f1a; /* auth-surface-2 */
+  --secondary-foreground: #f8f1dc;
+  --muted: #1b1a16;
+  --muted-foreground: #b9ae92;
+  --accent: #d8b45a; /* gold accent */
+  --accent-foreground: #0d0d0c;
+  --destructive: #f87171; /* auth-error */
   --destructive-foreground: #ffffff;
-  --border: #e7e1d3; /* soft cream-toned border */
-  --input: #e7e1d3;
-  --ring: #f59e0b; /* gold focus ring */
-  --radius: 0.75rem; /* 12px — prestigious but approachable */
+  --border: rgba(216, 180, 90, 0.22); /* hairline gold border */
+  --input: #1b1a16;
+  --ring: #d8b45a; /* gold focus ring */
+  --radius: 0.75rem;
 }
 
 @layer base {
@@ -112,14 +140,27 @@
   }
   html {
     scroll-behavior: smooth;
+    background: var(--background);
   }
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
-    font-feature-settings: "tnum"; /* tabular numbers for $ + dates */
+    font-feature-settings: "tnum", "ss01"; /* tabular numerals + stylistic set 1 */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     margin: 0;
+    /* Subtle warm-graphite vignette baseline (the visual stage will layer on top) */
+    background-image:
+      radial-gradient(
+        ellipse at 50% -10%,
+        rgba(216, 180, 90, 0.05) 0%,
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse at 80% 110%,
+        rgba(155, 118, 46, 0.04) 0%,
+        transparent 50%
+      );
   }
   h1,
   h2,
@@ -128,14 +169,71 @@
   h5,
   h6 {
     font-family: var(--font-display);
-    color: var(--color-navy-800);
+    color: var(--color-auth-text-strong);
     letter-spacing: -0.02em;
     font-weight: 600;
   }
 }
 
-/* Utility: force tabular numerals (use on money/deadline displays) */
+/* ─── Utility classes ─────────────────────────────────────── */
+
+/* Tabular numerals (use on money / deadlines / counters) */
 .tabular {
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums;
+}
+
+/* Premium glass card surface (used for auth form, floating stage cards) */
+.auth-glass {
+  background: var(--color-auth-glass);
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  border: 1px solid var(--color-auth-border);
+}
+
+.auth-glass-strong {
+  background: var(--color-auth-glass-strong);
+  backdrop-filter: blur(28px) saturate(120%);
+  -webkit-backdrop-filter: blur(28px) saturate(120%);
+  border: 1px solid var(--color-auth-border-strong);
+}
+
+/* Subtle noise overlay — apply on top of any dark surface for warmth */
+.auth-noise-layer {
+  background-image: url("/auth-assets/noise-texture.png");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  opacity: 0.25;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.auth-grain-layer {
+  background-image: url("/auth-assets/grain-overlay.png");
+  background-repeat: repeat;
+  background-size: 512px 512px;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.auth-particle-layer {
+  background-image: url("/auth-assets/gold-particle-overlay.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0.35;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* Respect prefers-reduced-motion globally */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

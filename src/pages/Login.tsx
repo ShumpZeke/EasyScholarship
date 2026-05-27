@@ -47,7 +47,7 @@ export default function Login() {
             className="inline-flex items-center gap-2 text-navy-800 hover:opacity-80"
           >
             <span className="text-gold-500 text-xl">✦</span>
-            <span className="font-display text-xl">Easy Scholarship</span>
+            <span className="font-display text-xl">Easy Scholarships</span>
           </Link>
         </div>
 
