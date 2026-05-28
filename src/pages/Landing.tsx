@@ -1,11 +1,13 @@
-import { useRef, useState } from "react"
+import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
-import { useVideoScrollScrub } from "@/hooks/useVideoScrollScrub"
+import { useScrollProgress } from "@/hooks/useScrollProgress"
 import { useReducedMotionSafe } from "@/hooks/useReducedMotionSafe"
 import { useIsMobile } from "@/hooks/useIsMobile"
+import { VaultSequence } from "@/components/landing/VaultSequence"
 
-const VIDEO = "/vault-assets/vault-scroll-background.mp4"
+const FRAME_COUNT = 192
+const FRAME_BASE = "/vault-assets/frames/frame_"
 const POSTER_CLOSED = "/vault-assets/vault-closed.png"
 const POSTER_OPEN = "/vault-assets/vault-open.png"
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number]
@@ -13,34 +15,26 @@ const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number]
 function clamp(v: number, min: number, max: number) {
   return Math.min(max, Math.max(min, v))
 }
-/** Map a value from one range to another, clamped to 0..1 of the input range. */
 function mapRange(v: number, inMin: number, inMax: number, outMin: number, outMax: number) {
   const t = clamp((v - inMin) / (inMax - inMin), 0, 1)
   return outMin + (outMax - outMin) * t
 }
 
 export default function Landing() {
-  const videoRef = useRef<HTMLVideoElement>(null)
   const reducedMotion = useReducedMotionSafe()
   const isMobile = useIsMobile()
   const navigate = useNavigate()
   const [leaving, setLeaving] = useState<string | null>(null)
 
-  // Static mode = MOBILE ONLY (iOS can't scrub video reliably). Reduced-motion
-  // desktop users still get the scrub — it's user-driven, not auto-playing.
+  // Page is 520vh tall (spacer below) → this returns 0..1 across the full scroll.
+  const scroll = useScrollProgress()
   const staticMode = isMobile
-  const progress = useVideoScrollScrub(videoRef, {
-    pageHeightVh: staticMode ? 100 : 520,
-    smoothing: 0.14,
-  })
-  const p = staticMode ? 1 : progress
+  const p = staticMode ? 1 : scroll
 
-  // Overlay opacities driven by scroll progress
-  const introOpacity = 1 - mapRange(p, 0.06, 0.26, 0, 1)
-  const ctaOpacity = staticMode ? 1 : mapRange(p, 0.78, 0.94, 0, 1)
+  const introOpacity = 1 - mapRange(p, 0.05, 0.24, 0, 1)
+  const ctaOpacity = staticMode ? 1 : mapRange(p, 0.8, 0.95, 0, 1)
   const ctaInteractive = ctaOpacity > 0.85
 
-  /** Zoom out of the vault, then navigate into the real auth route. */
   const enterAuth = (path: string) => {
     if (leaving) return
     setLeaving(path)
@@ -49,7 +43,7 @@ export default function Landing() {
 
   return (
     <div className="relative bg-auth-bg">
-      {/* ─── Fixed vault stage (video scrubs with scroll) ────── */}
+      {/* ─── Fixed vault stage (frame-accurate image sequence) ── */}
       <motion.div
         className="fixed inset-0 z-0 origin-center"
         animate={
@@ -67,19 +61,16 @@ export default function Landing() {
             draggable={false}
           />
         ) : (
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover"
-            src={VIDEO}
-            poster={POSTER_CLOSED}
-            muted
-            playsInline
-            preload="auto"
+          <VaultSequence
+            progress={p}
+            frameCount={FRAME_COUNT}
+            basePath={FRAME_BASE}
+            posterSrc={POSTER_CLOSED}
           />
         )}
-        {/* Cinematic shade — darkens edges, keeps center vault readable */}
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,transparent_30%,rgba(5,5,5,0.55)_100%)]" />
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-auth-bg/40 via-transparent to-auth-bg/70" />
+        {/* Cinematic shade keeps the center vault readable */}
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,transparent_30%,rgba(5,5,5,0.5)_100%)]" />
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-auth-bg/30 via-transparent to-auth-bg/65" />
       </motion.div>
 
       {/* ─── Top bar ─────────────────────────────────────────── */}
@@ -98,7 +89,7 @@ export default function Landing() {
         </button>
       </header>
 
-      {/* ─── Intro copy (fades OUT as you scroll in) ─────────── */}
+      {/* ─── Intro copy (fades OUT) ──────────────────────────── */}
       <div
         className="fixed inset-0 z-20 flex flex-col items-center justify-center text-center px-6"
         style={{ opacity: introOpacity, pointerEvents: "none" }}
@@ -153,7 +144,7 @@ export default function Landing() {
             </button>
             <button
               onClick={() => enterAuth("/login")}
-              className="auth-glass-strong text-auth-text px-9 py-3.5 rounded-xl border border-auth-border hover:bg-auth-glass-strong transition-colors"
+              className="rounded-xl border border-auth-border bg-auth-surface/90 text-auth-text px-9 py-3.5 hover:bg-auth-surface transition-colors"
             >
               Sign in
             </button>
@@ -161,7 +152,7 @@ export default function Landing() {
         </motion.div>
       </div>
 
-      {/* ─── Scroll spacer — creates the scroll distance for the scrub ─ */}
+      {/* ─── Scroll spacer — creates the scrub distance ──────── */}
       <div style={{ height: staticMode ? "100vh" : "520vh" }} aria-hidden="true" />
     </div>
   )
