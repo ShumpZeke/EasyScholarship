@@ -67,7 +67,8 @@ export function VaultSequence({
     for (let i = 0; i < frameCount; i++) {
       const img = new Image()
       img.decoding = "async"
-      img.src = `${basePath}${String(i + 1).padStart(3, "0")}.webp`
+      // ?v=2 busts the browser cache now that frames are 1080p (was 720p)
+      img.src = `${basePath}${String(i + 1).padStart(3, "0")}.webp?v=2`
       const mark = () => {
         if (!flags[i]) {
           flags[i] = true
