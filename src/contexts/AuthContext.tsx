@@ -9,12 +9,15 @@ interface AuthContextValue {
   loading: boolean
   signUp: (
     email: string,
-    password: string
+    password: string,
+    fullName?: string
   ) => Promise<{ error: AuthError | null; needsEmailConfirm: boolean }>
   signIn: (
     email: string,
     password: string
   ) => Promise<{ error: AuthError | null }>
+  signInWithGoogle: () => Promise<{ error: AuthError | null }>
+  resetPassword: (email: string) => Promise<{ error: AuthError | null }>
   signOut: () => Promise<void>
 }
 
@@ -25,13 +28,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Load the initial session from localStorage (if any)
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
       setLoading(false)
     })
 
-    // Subscribe to all future auth changes (login, logout, token refresh)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, newSession) => {
@@ -43,17 +44,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const signUp = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({ email, password })
-    // If email confirmation is enabled in Supabase, no session is returned.
+  const signUp = async (email: string, password: string, fullName?: string) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: fullName ? { data: { full_name: fullName } } : undefined,
+    })
     const needsEmailConfirm = !error && !data.session
     return { error, needsEmailConfirm }
   }
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    return { error }
+  }
+
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/dashboard` },
+    })
+    return { error }
+  }
+
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/login`,
     })
     return { error }
   }
@@ -70,6 +86,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         signUp,
         signIn,
+        signInWithGoogle,
+        resetPassword,
         signOut,
       }}
     >
