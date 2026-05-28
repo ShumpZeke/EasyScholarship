@@ -118,7 +118,7 @@ export function VaultSequence({
       // Ease the displayed progress toward the scroll target so a fast scroll
       // plays through frames smoothly instead of snapping/jumping.
       const targetP = progressRef.current
-      smooth += (targetP - smooth) * 0.2
+      smooth += (targetP - smooth) * 0.55
       if (Math.abs(targetP - smooth) < 0.0004) smooth = targetP
       const target = Math.min(
         frameCount - 1,
