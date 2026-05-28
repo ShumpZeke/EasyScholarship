@@ -1,0 +1,94 @@
+{
+  "file": "assets/models/treasure_chest_source.glb",
+  "source_file_size_bytes": 13178968,
+  "sha256": "ed923b52b1136a1b2b874e975e06b503801f002381d0974c6a07bcf4cf113b35",
+  "glb_header": {
+    "magic_hex": "0x46546c67",
+    "version": 2,
+    "length_bytes": 13178968
+  },
+  "asset": {
+    "extras": {
+      "author": "Multipainkiller Studio (https://sketchfab.com/Multipainkiller_Studio)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/treasure-chest-b124919b7bc3470c82daeef72823f941",
+      "title": "Treasure Chest"
+    },
+    "generator": "Sketchfab-12.68.0",
+    "version": "2.0"
+  },
+  "counts": {
+    "scenes": 1,
+    "nodes": 13,
+    "meshes": 2,
+    "materials": 2,
+    "textures": 6,
+    "images": 6,
+    "animations": 2
+  },
+  "node_names": [
+    "Sketchfab_model",
+    "Chest.fbx",
+    "Object_2",
+    "RootNode",
+    "Armature",
+    "Object_5",
+    "_rootJoint",
+    "root_00",
+    "top_01",
+    "Object_9",
+    "Object_10",
+    "Object_11",
+    "SM_Chest"
+  ],
+  "mesh_names": [
+    "SM_Chest_M_Chest_Reinforcment_0",
+    "SM_Chest_M_Chest_Wood_0"
+  ],
+  "material_names": [
+    "M_Chest_Reinforcment",
+    "M_Chest_Wood"
+  ],
+  "animations": [
+    {
+      "name": "Armature|A_Open",
+      "channels": [
+        {
+          "path": "scale",
+          "node_index": 8,
+          "node_name": "top_01"
+        },
+        {
+          "path": "rotation",
+          "node_index": 8,
+          "node_name": "top_01"
+        },
+        {
+          "path": "rotation",
+          "node_index": 4,
+          "node_name": "Armature"
+        }
+      ]
+    },
+    {
+      "name": "Armature|A_Close",
+      "channels": [
+        {
+          "path": "scale",
+          "node_index": 8,
+          "node_name": "top_01"
+        },
+        {
+          "path": "rotation",
+          "node_index": 8,
+          "node_name": "top_01"
+        },
+        {
+          "path": "rotation",
+          "node_index": 4,
+          "node_name": "Armature"
+        }
+      ]
+    }
+  ]
+}

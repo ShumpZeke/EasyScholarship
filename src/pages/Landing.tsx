@@ -114,7 +114,7 @@ export default function Landing() {
             }`}
           >
             <div className="inline-flex items-center gap-3 text-auth-muted text-[11px] uppercase tracking-[0.22em]">
-              <span>Scroll to open the vault</span>
+              <span>Scroll to open the chest</span>
               <span className="inline-block w-px h-8 bg-auth-gold/50 animate-pulse" />
             </div>
           </div>
@@ -142,7 +142,7 @@ export default function Landing() {
               organized.
             </h1>
             <p className="mt-6 text-base md:text-lg text-auth-muted max-w-lg mx-auto leading-relaxed">
-              One vault. Every scholarship you qualify for. Every deadline.
+              One chest. Every scholarship you qualify for. Every deadline.
               Every essay. Nothing slips through.
             </p>
             <div className="mt-12 flex flex-col sm:flex-row gap-3 justify-center">
@@ -176,7 +176,7 @@ export default function Landing() {
             className="w-full flex flex-col items-center"
           >
             <p className="text-[10px] text-auth-muted-deep uppercase tracking-[0.22em] mb-4">
-              03 — Inside the vault
+              03 — Inside the chest
             </p>
             <h2 className="font-display text-3xl md:text-5xl font-semibold text-auth-text-strong text-center mb-12 tracking-tight">
               Everything in one place.

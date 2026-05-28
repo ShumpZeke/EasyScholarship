@@ -1,0 +1,650 @@
+ROLE
+You are Claude Code acting as a senior frontend engineer, creative technologist, 3D/WebGL designer, motion designer, UI designer, performance engineer, and QA lead.
+
+You are building a premium cinematic website experience for an app called Easy Scholarships.
+
+The user wants the website to feel inspired by the uploaded Igloo Inc screenshot:
+- wide landscape scene
+- cinematic 3D environment
+- minimal text overlays
+- quiet luxury
+- immersive first screen
+- interactive scroll discovery
+- premium studio feeling
+- object centered in a surreal landscape
+- atmospheric lighting
+- clean UI
+- smooth movement
+- polished, not generic
+
+IMPORTANT COPYRIGHT RULE
+Do not clone Igloo Inc.
+Do not copy their logo.
+Do not copy their source code.
+Do not copy their wording.
+Do not copy their exact layout pixel-for-pixel.
+Do not use the name Igloo anywhere in the final product.
+Use the screenshot only as a quality and mood reference.
+
+Build an original Easy Scholarships website with a similar level of cinematic landscape quality.
+
+PROJECT GOAL
+Create a premium landing website for Easy Scholarships that feels like a landscape-based 3D world.
+
+The website should feel like:
+- a scholarship vault hidden inside a dark luxury landscape
+- students discovering financial aid opportunities
+- calm, premium, cinematic, and futuristic
+- black, gold, graphite, and soft moonlight
+- more creative-studio website than basic SaaS landing page
+
+The site should not feel like:
+- a basic Tailwind landing page
+- a generic AI startup page
+- a boring scholarship website
+- a template
+- a copied Igloo Inc clone
+- childish
+- crowded
+- too colorful
+- cheap neon
+- full of random emojis
+
+CORE CONCEPT
+Create a full-screen 3D landscape homepage.
+
+Instead of an igloo, the center object should be an original Easy Scholarships object.
+
+Main 3D object options:
+1. A black-and-gold scholarship vault
+2. A glass-gold opportunity capsule
+3. A premium document stack opening into floating scholarship cards
+4. A glowing scholarship core inside a crater
+5. A futuristic gold application portal rising from dark terrain
+
+Use option 2 unless the project already has a better brand direction.
+
+The environment:
+- wide cinematic landscape
+- dark graphite terrain
+- soft mountains or hills in the background
+- subtle gold particles
+- atmospheric fog
+- low contrast moonlight
+- premium gold glow from the center object
+- soft grain/noise
+- quiet and spacious
+
+The user wants a landscape like the screenshot, but original and branded for Easy Scholarships.
+
+VISUAL STYLE
+Use this visual direction:
+
+Colors:
+- deep black: #050505
+- graphite: #0D0D0C
+- dark surface: #151410
+- muted gold: #D8B45A
+- soft gold: #F1D98A
+- deep gold: #9B762E
+- cream text: #F8F1DC
+- muted text: #B9AE92
+- fog gray: #9CA3AF
+
+Mood:
+- cinematic
+- quiet
+- expensive
+- mysterious
+- clean
+- wide
+- landscape-first
+- low UI clutter
+- high-end studio polish
+
+Typography:
+Use a clean modern font.
+Prefer Geist, Inter, or system sans.
+Use small monospaced UI labels for the side text overlays.
+Do not use decorative fonts.
+
+FIRST REQUIRED ACTION
+Before coding, audit the current project.
+
+Inspect:
+- package.json
+- src/
+- public/
+- vite config
+- existing routes
+- existing CSS
+- existing auth pages
+- existing assets
+- existing Supabase setup
+- existing Tailwind setup
+- existing 3D libraries
+- existing animation libraries
+
+Then report:
+- framework found
+- package manager found
+- styling system found
+- router found
+- animation libraries found
+- 3D libraries found
+- existing routes
+- existing assets
+- missing assets
+- proposed files to create
+- proposed files to update
+- implementation passes
+- risks
+- questions before coding
+
+Do not start coding until after this audit response.
+
+TECH STACK
+Use the existing stack if possible.
+
+Preferred stack:
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Framer Motion
+- Three.js
+- @react-three/fiber
+- @react-three/drei
+
+If Three.js / R3F / Drei are missing, install:
+- three
+- @react-three/fiber
+- @react-three/drei
+- @types/three
+
+Do not add heavy libraries unless needed.
+Keep performance strong.
+
+MAIN PAGES
+Build these routes:
+
+/ 
+Main cinematic landscape homepage
+
+/login
+Premium auth page connected to the same visual world
+
+/signup
+Premium signup page connected to the same visual world
+
+/forgot-password
+Minimal premium forgot password page
+
+/dashboard
+Keep existing dashboard if it exists.
+If missing, create a minimal placeholder only.
+
+Do not build a full dashboard unless already present.
+
+HOMEPAGE STRUCTURE
+The homepage should feel like an interactive cinematic landscape.
+
+Section 1:
+Full-screen landscape hero.
+
+Elements:
+- Easy Scholarships wordmark in the top-left
+- small copyright-style line under it, inspired by screenshot but original
+- center 3D scholarship object
+- right-side small manifesto text
+- bottom-left “Scroll down to discover.”
+- bottom-left sound toggle visual, but sound should be off by default
+- bottom-right small route links or minimal nav
+- CTA button: “Start finding scholarships”
+- secondary button: “Sign in”
+
+Hero copy:
+Main hidden/visible headline:
+Easy Scholarships
+
+Small manifesto text:
+Our mission is to help students find better scholarship opportunities without feeling lost, late, or overwhelmed.
+
+Secondary line:
+A calmer way to track matches, essays, and deadlines.
+
+Do not overload the first screen with marketing text.
+Keep it clean and cinematic.
+
+Section 2:
+Scroll reveals the object opening.
+
+Content:
+- scholarship cards float out of the central object
+- cards show match scores, deadlines, and scholarship names
+- short heading: “Your opportunities, organized.”
+- short paragraph explaining the app
+
+Section 3:
+Feature landscape panels.
+
+Features:
+- Smart scholarship matching
+- Deadline tracking
+- Essay planning
+- Resume-based recommendations
+- Saved opportunities
+- Application progress
+
+Each feature should be shown as floating panels in the world, not boring cards.
+
+Section 4:
+Final CTA.
+
+Copy:
+Ready to make scholarships feel manageable?
+Create your Easy Scholarships account and start building your application path.
+
+Buttons:
+- Create account
+- Sign in
+
+INTERACTION REQUIREMENTS
+Add smooth interactions:
+- mouse movement creates subtle camera parallax
+- scroll moves the camera slowly through the landscape
+- center object glows slightly on hover
+- floating cards drift slowly
+- gold particles move upward
+- terrain fog shifts subtly
+- buttons have premium hover states
+- page transitions are smooth
+
+Reduced motion:
+Respect prefers-reduced-motion.
+If reduced motion is enabled:
+- disable camera parallax
+- disable floating movement
+- keep opacity fades only
+- no fast animations
+
+3D REQUIREMENTS
+Build the 3D scene with React Three Fiber.
+
+Scene components:
+- LandscapeScene.tsx
+- ScholarshipCore.tsx
+- Terrain.tsx
+- FloatingScholarshipCards.tsx
+- GoldParticles.tsx
+- CameraRig.tsx
+- LandscapeFallback.tsx
+
+3D object:
+Create a procedural object first.
+Do not require an external model to work.
+
+Object design:
+- central glass-gold capsule or vault
+- black graphite base
+- gold inner glow
+- floating thin scholarship cards
+- subtle animated seams
+- premium material
+
+Terrain:
+Use procedural geometry.
+No need for huge textures.
+Use simple displacement or shaped planes.
+Keep it performant.
+
+Lighting:
+- soft ambient light
+- cool moonlight
+- warm gold point light from the object
+- subtle rim light
+- no harsh neon
+
+Performance:
+- cap devicePixelRatio at 1.5
+- lazy-load 3D scene
+- show CSS fallback while loading
+- pause animations when tab is hidden
+- avoid heavy post-processing
+- no physics
+- no massive textures
+- no model over 1MB unless compressed
+
+HOMEPAGE UI LAYOUT
+Desktop:
+- full viewport canvas
+- UI overlays positioned over canvas
+- top-left brand
+- top-right manifesto or nav
+- bottom-left scroll prompt
+- bottom-right CTA/nav
+- keep generous negative space
+
+Mobile:
+- keep the landscape but simplify it
+- center object remains visible
+- reduce particles
+- stack buttons
+- text must stay readable
+- no horizontal overflow
+- 44px minimum tap targets
+
+AUTH PAGE STYLE
+Login and signup should share the landscape visual language.
+
+Auth pages:
+- left or center premium glass form
+- right side or background uses the same landscape scene
+- black/gold form styling
+- minimal premium text
+- Google OAuth button if Supabase is configured
+- normal email/password auth if existing
+- no generic white cards
+
+COPY FOR AUTH
+Login:
+Heading:
+Welcome back to Easy Scholarships.
+
+Subtitle:
+Sign in to continue tracking matches, essays, and deadlines.
+
+Button:
+Sign in
+
+Google:
+Continue with Google
+
+Signup:
+Heading:
+Start finding better scholarship matches.
+
+Subtitle:
+Create your Easy Scholarships account and build a smarter path to applications.
+
+Button:
+Create account
+
+Forgot password:
+Heading:
+Forgot your password?
+
+Subtitle:
+Enter your email and we'll send a reset link.
+
+DESIGN DETAILS
+Use small interface labels inspired by the screenshot style, but original.
+
+Examples:
+- // Easy Scholarships
+- // Opportunity System
+- // Student Aid Interface
+- // Scroll to discover.
+- // Sound: Off
+- // Match Engine Online
+- // Deadline Shield Active
+
+Use these as decorative interface text only.
+Do not overuse them.
+
+Create a premium wordmark treatment:
+Text:
+Easy Scholarships
+
+Style:
+- clean
+- white/cream
+- optional gold mark
+- no fake copied logo
+- no Igloo-style copied logo
+
+ASSET FOLDER
+Create:
+
+public/
+  landscape-assets/
+    README.md
+    textures/
+      grain.png
+      gold-particles.png
+    models/
+      scholarship-core-placeholder.glb
+    posters/
+      landscape-poster.png
+
+If external assets are missing:
+- generate procedural CSS/Three.js fallback
+- document where to add final files later
+
+DOCUMENTATION
+Create:
+
+docs/
+  landscape-website-handoff.md
+  landscape-assets-needed.md
+  landscape-design-notes.md
+  landscape-performance-checklist.md
+
+docs/landscape-assets-needed.md must include:
+- recommended hero poster size
+- recommended 3D model limits
+- texture size limits
+- image generation prompts
+- video generation prompts
+- where to place assets
+- how to disable 3D
+- how to replace the procedural object with a real GLB
+
+IMAGE GENERATION PROMPTS
+Create prompts for these assets inside docs/landscape-assets-needed.md:
+
+1. desktop landscape poster
+2. mobile landscape poster
+3. scholarship core object reference
+4. gold particle overlay
+5. dark terrain texture
+6. floating scholarship card render
+7. video loop frame 1
+8. video loop frame 2
+9. video loop frame 3
+10. video loop frame 4
+
+Prompt style:
+- cinematic dark graphite landscape
+- premium black and gold scholarship object
+- atmospheric fog
+- soft moonlight
+- warm gold glow
+- no text in image
+- no logos
+- no people
+- no copyrighted brand references
+- wide composition
+- high-end 3D render
+
+Example image prompt:
+A cinematic wide 3D landscape for a premium scholarship platform, dark graphite terrain with soft rolling hills, atmospheric fog, moonlit background, a glowing black-and-gold glass scholarship capsule in the center, floating translucent application cards emerging from the object, warm muted gold inner light, soft rim lighting, premium quiet-luxury mood, high-end creative studio render, minimal composition, no text, no logos, no people, no brand references, 16:9, ultra detailed, realistic materials, clean depth of field.
+
+Do not generate images directly unless the user asks.
+Just write prompts and create placeholders if needed.
+
+FILES TO CREATE
+Suggested structure:
+
+src/
+  pages/
+    LandscapeHome.tsx
+    Login.tsx
+    Signup.tsx
+    ForgotPassword.tsx
+
+  components/
+    landscape/
+      LandscapeShell.tsx
+      LandscapeHero.tsx
+      LandscapeScene.tsx
+      LandscapeFallback.tsx
+      ScholarshipCore.tsx
+      Terrain.tsx
+      FloatingScholarshipCards.tsx
+      GoldParticles.tsx
+      CameraRig.tsx
+      LandscapeOverlay.tsx
+      LandscapeNav.tsx
+      ScrollPrompt.tsx
+      ManifestoPanel.tsx
+
+  components/
+    auth/
+      AuthLandscapeShell.tsx
+      AuthFormCard.tsx
+      AuthInput.tsx
+      AuthButton.tsx
+      PasswordField.tsx
+      GoogleButton.tsx
+
+  styles/
+    landscape-tokens.css
+
+  hooks/
+    useReducedMotionSafe.ts
+    useMouseParallax.ts
+    useScrollProgress.ts
+
+  lib/
+    auth-errors.ts
+
+CODING RULES
+Use TypeScript.
+Avoid any.
+Use type-only imports where needed.
+Keep components small.
+Use named exports for shared components.
+Keep page files readable.
+Do not duplicate the Supabase client.
+Do not hardcode private keys.
+Do not commit .env files.
+Do not log passwords or secret values.
+
+ACCESSIBILITY
+Required:
+- visible focus rings
+- semantic buttons and links
+- labels on form inputs
+- aria-label for icon-only buttons
+- reduced motion support
+- text contrast must pass WCAG AA
+- 3D canvas should be decorative unless it communicates content
+- if decorative, use aria-hidden
+- if meaningful, add aria-label
+
+PERFORMANCE TARGETS
+- homepage loads fast even before 3D finishes
+- 3D lazy-loaded
+- CSS fallback appears immediately
+- no layout shift
+- canvas should not block buttons
+- images optimized
+- no huge textures
+- no model over 1MB unless compressed
+- Lighthouse target: Performance 85+, Accessibility 95+
+
+IMPLEMENTATION PASSES
+Build in passes.
+
+PASS 1 — Audit and plan
+- inspect project
+- identify existing stack
+- report proposed changes
+- do not edit yet
+
+PASS 2 — Tokens and layout foundation
+- add landscape color tokens
+- add global background treatment
+- create LandscapeShell
+- create CSS fallback
+- create docs folder
+
+PASS 3 — Homepage overlay UI
+- brand overlay
+- manifesto text
+- scroll prompt
+- CTA buttons
+- responsive layout
+
+PASS 4 — 3D landscape
+- add R3F scene
+- procedural terrain
+- central scholarship core
+- lights and fog
+- lazy loading
+- reduced motion behavior
+
+PASS 5 — Scroll interaction
+- camera movement
+- card reveal
+- section transitions
+- feature panels
+
+PASS 6 — Auth pages
+- login/signup/forgot password in same landscape style
+- connect to existing auth/Supabase if present
+- keep secure
+- no fake auth
+
+PASS 7 — Polish and QA
+- responsive check at 320, 375, 768, 1280, 1920
+- keyboard test
+- reduced motion test
+- console check
+- build check
+- Lighthouse check
+- final docs
+
+TESTING
+Run:
+npm run build
+npm run lint
+
+If scripts are missing, report that.
+
+Manual test:
+- homepage desktop
+- homepage mobile
+- scroll interactions
+- CTA links
+- /login
+- /signup
+- /forgot-password
+- reduced motion
+- keyboard navigation
+- no horizontal overflow
+- no console errors
+
+FINAL DELIVERABLE
+Final output must include:
+- working cinematic landscape homepage
+- responsive layout
+- 3D procedural landscape
+- premium overlays
+- auth pages matching the style
+- docs explaining assets and replacement
+- performance notes
+- no copied Igloo assets
+- no copied Igloo code
+- no copied Igloo branding
+
+FINAL QUALITY BAR
+The finished website should feel like:
+A student scholarship app built with the visual polish of a high-end creative studio.
+
+It should feel cinematic, dark, wide, quiet, interactive, and premium.
+
+Do not stop at a basic page.
+Do not call it done if it looks like a template.
+Do not call it done if the first screen does not feel like a landscape world.

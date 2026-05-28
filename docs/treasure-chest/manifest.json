@@ -1,0 +1,43 @@
+{
+  "package_name": "ToolBox",
+  "created_for": "Easy Scholarships treasure chest 3D continuation",
+  "created_date": "2026-05-27",
+  "main_instruction": "Proceed using the full workflow in the ZIP and complete the remaining work.",
+  "concept": "Treasure chest, not vault",
+  "main_model": "assets/models/treasure_chest_source.glb",
+  "model_license_notice": "See docs/GLB_LICENSE_NOTICE.md",
+  "included_prompts": [
+    "prompts/00_MASTER_PROMPT_CLAUDE_CODE_TREASURE_CHEST.md",
+    "prompts/01_GLB_SWAP_AND_TREASURE_CHEST_INTEGRATION.md",
+    "prompts/02_PAGE_TRANSITIONS_PROMPT.md",
+    "prompts/03_AUTH_WORLD_PROMPT.md",
+    "prompts/04_TREASURE_CHEST_MODEL_GENERATION_PROMPTS.md",
+    "prompts/05_REMOTION_TREASURE_CHEST_PROMPT.md"
+  ],
+  "included_docs": [
+    "docs/ANIMATION_PLAN.md",
+    "docs/ASSET_MANIFEST.md",
+    "docs/DEVELOPER_FULL_WORKFLOW.md",
+    "docs/GLB_INSPECTION_REPORT.json",
+    "docs/GLB_LICENSE_NOTICE.md",
+    "docs/MODEL_PIPELINE_REALISM.md",
+    "docs/PERFORMANCE_AND_OPTIMIZATION.md",
+    "docs/ROUTE_TRANSITION_DESIGN.md",
+    "docs/SETUP_NOTES.md",
+    "docs/STYLE_GUIDE.md",
+    "docs/TESTING_CHECKLIST.md"
+  ],
+  "glb_report_summary": {
+    "scenes": 1,
+    "nodes": 13,
+    "meshes": 2,
+    "materials": 2,
+    "textures": 6,
+    "images": 6,
+    "animations": 2
+  },
+  "glb_animation_names": [
+    "Armature|A_Open",
+    "Armature|A_Close"
+  ]
+}
