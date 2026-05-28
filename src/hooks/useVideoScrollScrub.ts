@@ -41,6 +41,8 @@ export function useVideoScrollScrub(
     video.preload = "auto"
     video.muted = true
     video.playsInline = true
+    // Force the browser to start fetching so seeking works promptly
+    if (video.readyState < 1) video.load()
 
     const updateTarget = () => {
       const scrollable = Math.max(

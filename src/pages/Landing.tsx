@@ -26,8 +26,9 @@ export default function Landing() {
   const navigate = useNavigate()
   const [leaving, setLeaving] = useState<string | null>(null)
 
-  // Static mode (mobile or reduced-motion): skip scrubbing, show open vault + CTA.
-  const staticMode = isMobile || reducedMotion
+  // Static mode = MOBILE ONLY (iOS can't scrub video reliably). Reduced-motion
+  // desktop users still get the scrub — it's user-driven, not auto-playing.
+  const staticMode = isMobile
   const progress = useVideoScrollScrub(videoRef, {
     pageHeightVh: staticMode ? 100 : 520,
     smoothing: 0.14,
@@ -113,7 +114,7 @@ export default function Landing() {
         <p className="mt-5 text-base md:text-lg text-auth-muted max-w-md leading-relaxed">
           Scroll to open the vault and claim what's yours.
         </p>
-        {!staticMode && (
+        {!staticMode && !reducedMotion && (
           <div className="mt-12 flex flex-col items-center gap-2 text-auth-muted-deep">
             <span className="text-[10px] uppercase tracking-[0.25em]">Scroll down</span>
             <span className="block w-px h-10 bg-gradient-to-b from-auth-gold/60 to-transparent animate-pulse" />

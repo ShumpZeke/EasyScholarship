@@ -93,7 +93,7 @@ export default function Signup() {
           </Link>
         </div>
 
-        <div className="auth-glass-strong rounded-3xl border border-auth-border p-8 shadow-2xl shadow-black/50">
+        <div className="rounded-3xl border border-auth-border bg-auth-surface/95 backdrop-blur-md p-8 shadow-2xl shadow-black/50">
           <h1 className="text-2xl md:text-3xl font-display font-semibold text-auth-text-strong mb-2 tracking-tight">
             Start finding better scholarship matches.
           </h1>

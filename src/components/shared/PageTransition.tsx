@@ -50,12 +50,13 @@ export function PageTransition({ children, cinematic = true }: Props) {
     )
   }
 
+  // Opacity + scale only — NO filter blur (blur can freeze mid-transition).
   return (
     <motion.div
-      initial={{ opacity: 0, filter: "blur(10px)", scale: 0.985 }}
-      animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-      exit={{ opacity: 0, filter: "blur(10px)", scale: 1.015 }}
-      transition={{ duration: 0.5, ease: EASE }}
+      initial={{ opacity: 0, scale: 0.99 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 1.01 }}
+      transition={{ duration: 0.4, ease: EASE }}
     >
       {children}
     </motion.div>

@@ -46,7 +46,7 @@ export default function ForgotPassword() {
           </Link>
         </div>
 
-        <div className="auth-glass-strong rounded-3xl border border-auth-border p-8 shadow-2xl shadow-black/50">
+        <div className="rounded-3xl border border-auth-border bg-auth-surface/95 backdrop-blur-md p-8 shadow-2xl shadow-black/50">
           {sentTo ? (
             <div className="text-center">
               <div className="mb-5 inline-flex items-center justify-center w-14 h-14 rounded-full bg-auth-gold/15 border border-auth-gold/40">
