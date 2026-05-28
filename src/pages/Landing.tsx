@@ -152,8 +152,8 @@ export default function Landing() {
         </motion.div>
       </div>
 
-      {/* ─── Scroll spacer — creates the scrub distance ──────── */}
-      <div style={{ height: staticMode ? "100vh" : "520vh" }} aria-hidden="true" />
+      {/* ─── Scroll spacer — creates the scrub distance (shorter = snappier) ─ */}
+      <div style={{ height: staticMode ? "100vh" : "300vh" }} aria-hidden="true" />
     </div>
   )
 }
