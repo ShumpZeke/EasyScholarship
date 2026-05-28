@@ -114,9 +114,10 @@ export function VaultSequence({
     }
 
     const tick = () => {
-      // Track the scroll tightly (responsive) with a hair of ease to kill jitter.
+      // Lenis already eases the scroll input, so track it 1:1 here (no
+      // double-lag). Fluidity comes from Lenis + the crossfade blend below.
       const targetP = progressRef.current
-      smooth += (targetP - smooth) * 0.85
+      smooth += (targetP - smooth) * 1
       if (Math.abs(targetP - smooth) < 0.0003) smooth = targetP
 
       // Fractional frame position, e.g. 45.7 → blend frame 45 + 46
