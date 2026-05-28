@@ -6,110 +6,124 @@ import { easeOutCubic } from "./noise"
 import { ChestContents } from "./ChestContents"
 
 interface Props {
-  /** 0..1 page scroll — drives the A_Open animation and lid glow */
+  /** 0..1 page scroll — drives the open animation + inner glow */
   progress: number
   reducedMotion: boolean
 }
 
 /**
  * Sketchfab treasure chest GLB (CC-BY-4.0 — Multipainkiller Studio).
- * See /docs/treasure-chest/GLB_LICENSE_NOTICE.md for attribution.
+ * Attribution in /docs/treasure-chest/GLB_LICENSE_NOTICE.md.
  *
- * The GLB ships with two animations:
- *   - "Armature|A_Open"  — lid opens (3 channels: top_01 scale+rotation, Armature rotation)
- *   - "Armature|A_Close" — reverse
+ * The model is auto-normalized on load: we measure its bounding box and
+ * scale it to a known height, center it horizontally, and sit it on y=0.
+ * This makes it render correctly no matter what units/origin the source
+ * model used (FBX exports are often 100× off) — fixing the "chest invisible"
+ * problem at the root.
  *
- * We grab the Open clip, pause it, and SCRUB its time directly from scroll
- * progress. This gives us frame-perfect "scroll to open" control instead of
- * triggering the animation as a one-shot.
+ * Lid opening: the GLB ships an "Armature|A_Open" clip animating the `top_01`
+ * lid node. We scrub that clip's time directly from scroll progress. If the
+ * clip can't bind, we fall back to manually rotating the `top_01` node.
  */
 const MODEL_PATH = "/landing-assets/3d/treasure_chest.glb"
+const TARGET_HEIGHT = 3.0
 useGLTF.preload(MODEL_PATH)
 
 export function TreasureChest({ progress, reducedMotion }: Props) {
   const groupRef = useRef<THREE.Group>(null!)
   const innerLightRef = useRef<THREE.PointLight>(null!)
+  const lidRef = useRef<THREE.Object3D | null>(null)
+  const lidBaseRotX = useRef(0)
 
   const gltf = useGLTF(MODEL_PATH)
   const { actions, mixer } = useAnimations(gltf.animations, groupRef)
 
-  // Clone the scene once so multiple renders don't fight over the same tree.
-  const scene = useMemo(() => gltf.scene.clone(true), [gltf.scene])
+  // Clone + auto-normalize (scale to TARGET_HEIGHT, center, sit on ground)
+  const scene = useMemo(() => {
+    const cloned = gltf.scene.clone(true)
+    cloned.updateMatrixWorld(true)
+    const box = new THREE.Box3().setFromObject(cloned)
+    const size = box.getSize(new THREE.Vector3())
+    const maxDim = Math.max(size.x, size.y, size.z) || 1
+    const s = TARGET_HEIGHT / maxDim
+    cloned.scale.setScalar(s)
+    cloned.updateMatrixWorld(true)
+    const box2 = new THREE.Box3().setFromObject(cloned)
+    const center = box2.getCenter(new THREE.Vector3())
+    cloned.position.set(-center.x, -box2.min.y, -center.z)
 
-  // Enable shadows + tweak material warmth on every mesh
-  useMemo(() => {
-    scene.traverse((obj) => {
+    cloned.traverse((obj) => {
       const mesh = obj as THREE.Mesh
       if (mesh.isMesh) {
         mesh.castShadow = true
         mesh.receiveShadow = true
-        const mat = mesh.material as THREE.MeshStandardMaterial
-        if (mat && "metalness" in mat) {
-          // Bring the metal bands forward a touch
-          if (mesh.name.toLowerCase().includes("reinforcment")) {
-            mat.metalness = Math.min(1, (mat.metalness ?? 0.8) + 0.05)
-            mat.roughness = Math.max(0, (mat.roughness ?? 0.4) - 0.05)
-          }
-        }
+      }
+      // Cache the lid node for the manual-rotation fallback
+      if (obj.name === "top_01") {
+        lidRef.current = obj
+        lidBaseRotX.current = obj.rotation.x
       }
     })
-  }, [scene])
+    return cloned
+  }, [gltf.scene])
 
-  // Set up the Open clip as a scrubbable timeline
+  // Set up the open clip as a paused, scrubbable timeline
   useEffect(() => {
-    const openAction = actions["Armature|A_Open"]
-    if (!openAction) return
-    openAction.reset()
-    openAction.clampWhenFinished = true
-    openAction.loop = THREE.LoopOnce
-    openAction.timeScale = 1
-    openAction.play()
-    openAction.paused = true
+    const open = actions["Armature|A_Open"]
+    if (!open) return
+    open.reset()
+    open.clampWhenFinished = true
+    open.loop = THREE.LoopOnce
+    open.play()
+    open.paused = true
   }, [actions])
 
   useFrame((state) => {
     const t = state.clock.elapsedTime
 
-    // Continuous subtle sway (skipped if reduced-motion)
+    // Gentle idle sway
     if (!reducedMotion && groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(t * 0.22) * 0.025
-      groupRef.current.position.y = Math.sin(t * 0.4) * 0.012
+      groupRef.current.rotation.y = Math.sin(t * 0.2) * 0.02
     }
 
-    // Scrub the open animation
+    // Open progress (lid starts moving at 30% scroll, fully open by 100%)
+    const open = easeOutCubic(Math.max(0, Math.min(1, (progress - 0.3) / 0.7)))
+
     const openAction = actions["Armature|A_Open"]
     if (openAction) {
-      // Doors only start opening at 35% scroll, fully open by 100%
-      const eased = easeOutCubic(Math.max(0, Math.min(1, (progress - 0.35) / 0.65)))
-      const duration = openAction.getClip().duration
-      openAction.time = eased * duration
-      // We must update the mixer manually because the action is paused
+      // Primary: scrub the baked clip
+      openAction.time = open * openAction.getClip().duration
       mixer.update(0)
+    } else if (lidRef.current) {
+      // Fallback: rotate the lid node manually (~110° open)
+      lidRef.current.rotation.x = lidBaseRotX.current - open * (Math.PI * 0.6)
     }
 
-    // Inner glow ramps as lid opens
+    // Inner glow ramps with opening
     if (innerLightRef.current) {
-      const open = Math.max(0, (progress - 0.45) / 0.55)
-      innerLightRef.current.intensity = open * 8.5
+      const glow = Math.max(0, (progress - 0.4) / 0.6)
+      innerLightRef.current.intensity = glow * 9
     }
   })
 
   return (
-    <group ref={groupRef} position={[0, 0, 0]} scale={1.5}>
+    <group ref={groupRef} position={[0, -0.6, 0]}>
       <primitive object={scene} />
 
-      {/* Warm gold glow inside the chest, intensity grows with progress */}
+      {/* Warm gold glow inside the chest */}
       <pointLight
         ref={innerLightRef}
-        position={[0, 0.6, 0]}
+        position={[0, 0.9, 0]}
         color="#f1d98a"
         intensity={0}
         distance={4}
-        decay={1.6}
+        decay={1.5}
       />
 
-      {/* Treasure — only visible/animated when chest is opening */}
-      <ChestContents progress={progress} reducedMotion={reducedMotion} />
+      {/* Treasure inside — coins + gems, revealed as the lid opens */}
+      <group position={[0, 0.55, 0]}>
+        <ChestContents progress={progress} reducedMotion={reducedMotion} />
+      </group>
     </group>
   )
 }
