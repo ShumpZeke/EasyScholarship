@@ -40,3 +40,6 @@ Desktop.ini
 
 # Test/coverage
 coverage/
+
+# Scratch / optimization working files
+tmp/
