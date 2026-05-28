@@ -1,194 +1,167 @@
-import { Suspense, lazy } from "react"
-import { Link } from "react-router-dom"
+import { useRef, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
-import { useScrollProgress } from "@/hooks/useScrollProgress"
+import { useVideoScrollScrub } from "@/hooks/useVideoScrollScrub"
 import { useReducedMotionSafe } from "@/hooks/useReducedMotionSafe"
 import { useIsMobile } from "@/hooks/useIsMobile"
-import { LandscapeFallback } from "@/components/landing/LandscapeFallback"
 
-const LandscapeScene = lazy(
-  () => import("@/components/landing/LandscapeScene")
-)
-
+const VIDEO = "/vault-assets/vault-scroll-background.mp4"
+const POSTER_CLOSED = "/vault-assets/vault-closed.png"
+const POSTER_OPEN = "/vault-assets/vault-open.png"
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number]
-const fadeUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }
+
+function clamp(v: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, v))
+}
+/** Map a value from one range to another, clamped to 0..1 of the input range. */
+function mapRange(v: number, inMin: number, inMax: number, outMin: number, outMax: number) {
+  const t = clamp((v - inMin) / (inMax - inMin), 0, 1)
+  return outMin + (outMax - outMin) * t
+}
 
 export default function Landing() {
-  const progress = useScrollProgress()
+  const videoRef = useRef<HTMLVideoElement>(null)
   const reducedMotion = useReducedMotionSafe()
   const isMobile = useIsMobile()
+  const navigate = useNavigate()
+  const [leaving, setLeaving] = useState<string | null>(null)
+
+  // Static mode (mobile or reduced-motion): skip scrubbing, show open vault + CTA.
+  const staticMode = isMobile || reducedMotion
+  const progress = useVideoScrollScrub(videoRef, {
+    pageHeightVh: staticMode ? 100 : 520,
+    smoothing: 0.14,
+  })
+  const p = staticMode ? 1 : progress
+
+  // Overlay opacities driven by scroll progress
+  const introOpacity = 1 - mapRange(p, 0.06, 0.26, 0, 1)
+  const ctaOpacity = staticMode ? 1 : mapRange(p, 0.78, 0.94, 0, 1)
+  const ctaInteractive = ctaOpacity > 0.85
+
+  /** Zoom out of the vault, then navigate into the real auth route. */
+  const enterAuth = (path: string) => {
+    if (leaving) return
+    setLeaving(path)
+    window.setTimeout(() => navigate(path), 420)
+  }
 
   return (
-    <div className="relative">
-      {/* ─── Fixed 3D scene behind content ──────────────────── */}
-      <div className="fixed inset-0 z-0">
-        {isMobile ? (
-          <LandscapeFallback />
+    <div className="relative bg-auth-bg">
+      {/* ─── Fixed vault stage (video scrubs with scroll) ────── */}
+      <motion.div
+        className="fixed inset-0 z-0 origin-center"
+        animate={
+          leaving
+            ? { scale: 0.8, filter: "blur(12px) brightness(0.45)" }
+            : { scale: 1, filter: "blur(0px) brightness(1)" }
+        }
+        transition={{ duration: 0.42, ease: EASE }}
+      >
+        {staticMode ? (
+          <img
+            src={POSTER_OPEN}
+            alt="Open vault revealing a warm gold glow"
+            className="w-full h-full object-cover"
+            draggable={false}
+          />
         ) : (
-          <Suspense fallback={<LandscapeFallback />}>
-            <LandscapeScene progress={progress} reducedMotion={reducedMotion} />
-          </Suspense>
+          <video
+            ref={videoRef}
+            className="w-full h-full object-cover"
+            src={VIDEO}
+            poster={POSTER_CLOSED}
+            muted
+            playsInline
+            preload="auto"
+          />
         )}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-auth-bg/20 via-transparent to-auth-bg/80" />
+        {/* Cinematic shade — darkens edges, keeps center vault readable */}
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,transparent_30%,rgba(5,5,5,0.55)_100%)]" />
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-auth-bg/40 via-transparent to-auth-bg/70" />
+      </motion.div>
+
+      {/* ─── Top bar ─────────────────────────────────────────── */}
+      <header className="fixed top-0 inset-x-0 z-30 flex items-center justify-between p-6 md:p-8">
+        <Link to="/" className="inline-flex items-center gap-2 text-auth-text">
+          <span className="text-auth-gold text-xl">✦</span>
+          <span className="font-display text-base font-semibold tracking-tight">
+            Easy Scholarships
+          </span>
+        </Link>
+        <button
+          onClick={() => enterAuth("/login")}
+          className="text-sm text-auth-text/90 hover:text-auth-text transition-colors"
+        >
+          Sign in
+        </button>
+      </header>
+
+      {/* ─── Intro copy (fades OUT as you scroll in) ─────────── */}
+      <div
+        className="fixed inset-0 z-20 flex flex-col items-center justify-center text-center px-6"
+        style={{ opacity: introOpacity, pointerEvents: "none" }}
+      >
+        <p className="text-[11px] text-auth-gold uppercase tracking-[0.3em] mb-5">
+          Scroll to unlock
+        </p>
+        <h1 className="font-display text-5xl md:text-7xl font-semibold text-auth-text-strong tracking-tight leading-[1.05] max-w-3xl">
+          Your scholarships,
+          <br />
+          locked inside.
+        </h1>
+        <p className="mt-5 text-base md:text-lg text-auth-muted max-w-md leading-relaxed">
+          Scroll to open the vault and claim what's yours.
+        </p>
+        {!staticMode && (
+          <div className="mt-12 flex flex-col items-center gap-2 text-auth-muted-deep">
+            <span className="text-[10px] uppercase tracking-[0.25em]">Scroll down</span>
+            <span className="block w-px h-10 bg-gradient-to-b from-auth-gold/60 to-transparent animate-pulse" />
+          </div>
+        )}
       </div>
 
-      {/* ─── Foreground content ─────────────────────────────── */}
-      <main className="relative z-10">
-        {/* ── Hero ─────────────────────────────────────────── */}
-        <section className="min-h-screen flex flex-col p-6 md:p-10">
-          {/* Top bar */}
-          <header className="flex items-start justify-between">
-            <Link to="/" className="inline-flex items-center gap-2 text-auth-text">
-              <span className="text-auth-gold text-xl">✦</span>
-              <span className="font-display text-base font-semibold tracking-tight">
-                Easy Scholarships
-              </span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link
-                to="/login"
-                className="text-sm text-auth-text/90 hover:text-auth-text transition-colors px-3 py-2"
-              >
-                Sign in
-              </Link>
-              <Link
-                to="/signup"
-                className="text-sm bg-gradient-to-b from-auth-gold-soft to-auth-gold text-auth-bg font-semibold px-4 py-2 rounded-lg shadow shadow-auth-gold/20 hover:shadow-auth-gold/35 transition-all"
-              >
-                Get started
-              </Link>
-            </div>
-          </header>
+      {/* ─── Vault-open CTA (fades IN at the reveal) ─────────── */}
+      <div
+        className="fixed inset-0 z-20 flex flex-col items-center justify-center text-center px-6"
+        style={{
+          opacity: ctaOpacity,
+          pointerEvents: ctaInteractive ? "auto" : "none",
+        }}
+      >
+        <motion.div
+          animate={{ opacity: leaving ? 0 : 1, y: leaving ? -12 : 0 }}
+          transition={{ duration: 0.3, ease: EASE }}
+          className="flex flex-col items-center"
+        >
+          <p className="text-[11px] text-auth-gold uppercase tracking-[0.3em] mb-4">
+            Vault open
+          </p>
+          <h2 className="font-display text-4xl md:text-6xl font-semibold text-auth-text-strong tracking-tight leading-[1.08] max-w-3xl">
+            Claim your scholarships.
+          </h2>
+          <p className="mt-4 text-base text-auth-muted max-w-sm leading-relaxed">
+            Create your account or sign in to start matching, tracking, and winning.
+          </p>
+          <div className="mt-9 flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => enterAuth("/signup")}
+              className="bg-gradient-to-b from-auth-gold-soft to-auth-gold text-auth-bg font-semibold px-9 py-3.5 rounded-xl shadow-lg shadow-auth-gold/30 hover:shadow-auth-gold/50 hover:scale-[1.03] transition-all"
+            >
+              Sign up
+            </button>
+            <button
+              onClick={() => enterAuth("/login")}
+              className="auth-glass-strong text-auth-text px-9 py-3.5 rounded-xl border border-auth-border hover:bg-auth-glass-strong transition-colors"
+            >
+              Sign in
+            </button>
+          </div>
+        </motion.div>
+      </div>
 
-          {/* Hero headline + CTAs — bottom-left anchored, chest fills the right/center */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.3, ease: EASE }}
-            className="mt-auto max-w-xl"
-          >
-            <p className="text-[11px] text-auth-gold uppercase tracking-[0.22em] mb-4">
-              Premium scholarship platform
-            </p>
-            <h1 className="font-display text-5xl md:text-7xl font-semibold text-auth-text-strong tracking-tight leading-[1.04]">
-              Unlock every scholarship
-              <br />
-              you qualify for.
-            </h1>
-            <p className="mt-5 text-base md:text-lg text-auth-muted max-w-md leading-relaxed">
-              Match, track, and win more money for college — all in one place.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Link
-                to="/signup"
-                className="bg-gradient-to-b from-auth-gold-soft to-auth-gold text-auth-bg font-semibold px-8 py-3.5 rounded-xl shadow-lg shadow-auth-gold/25 hover:shadow-auth-gold/40 hover:scale-[1.02] transition-all text-center"
-              >
-                Start finding scholarships
-              </Link>
-              <Link
-                to="/login"
-                className="auth-glass text-auth-text px-8 py-3.5 rounded-xl hover:bg-auth-glass-strong transition-colors text-center"
-              >
-                Sign in
-              </Link>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* ── Reveal ───────────────────────────────────────── */}
-        <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, amount: 0.4 }}
-            variants={fadeUp}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="max-w-3xl"
-          >
-            <h2 className="font-display text-4xl md:text-6xl font-semibold text-auth-text-strong tracking-tight leading-[1.06]">
-              Your opportunities, organized.
-            </h2>
-            <p className="mt-5 text-base md:text-lg text-auth-muted max-w-lg mx-auto leading-relaxed">
-              Every scholarship you qualify for. Every deadline. Every essay.
-              Nothing slips through the cracks.
-            </p>
-          </motion.div>
-        </section>
-
-        {/* ── Features ─────────────────────────────────────── */}
-        <section className="min-h-screen flex flex-col items-center justify-center px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, amount: 0.3 }}
-            variants={fadeUp}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="w-full flex flex-col items-center"
-          >
-            <h2 className="font-display text-3xl md:text-5xl font-semibold text-auth-text-strong text-center mb-12 tracking-tight">
-              Everything in one place.
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-w-4xl w-full">
-              {[
-                ["Smart matching", "Scholarships you actually qualify for."],
-                ["Deadline tracker", "Never miss another opportunity."],
-                ["Essay planning", "AI drafts in your voice."],
-                ["Resume scanning", "Auto-fill from your background."],
-                ["Saved opportunities", "Your shortlist, always synced."],
-                ["Application progress", "A built-in tracker for every app."],
-              ].map(([title, desc], i) => (
-                <motion.div
-                  key={title}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false, amount: 0.6 }}
-                  transition={{ duration: 0.5, delay: i * 0.06, ease: EASE }}
-                  className="auth-glass rounded-2xl p-5 hover:bg-auth-glass-strong transition-colors"
-                >
-                  <h3 className="text-auth-text-strong text-sm font-semibold mb-1.5">
-                    {title}
-                  </h3>
-                  <p className="text-auth-muted text-xs leading-relaxed">{desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </section>
-
-        {/* ── Final CTA ────────────────────────────────────── */}
-        <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, amount: 0.4 }}
-            variants={fadeUp}
-            transition={{ duration: 0.7, ease: EASE }}
-          >
-            <h2 className="font-display text-4xl md:text-6xl font-semibold text-auth-text-strong max-w-3xl leading-[1.1] tracking-tight">
-              Ready to make scholarships
-              <br />
-              feel manageable?
-            </h2>
-            <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                to="/signup"
-                className="bg-gradient-to-b from-auth-gold-soft to-auth-gold text-auth-bg font-semibold px-8 py-3.5 rounded-xl shadow-lg shadow-auth-gold/25 hover:shadow-auth-gold/40 hover:scale-[1.02] transition-all"
-              >
-                Create account
-              </Link>
-              <Link
-                to="/login"
-                className="auth-glass text-auth-text px-8 py-3.5 rounded-xl hover:bg-auth-glass-strong transition-colors"
-              >
-                Sign in
-              </Link>
-            </div>
-            <p className="mt-16 text-[10px] text-auth-muted-deep uppercase tracking-[0.22em]">
-              © Easy Scholarships · 3D chest by Multipainkiller Studio (CC-BY-4.0)
-            </p>
-          </motion.div>
-        </section>
-      </main>
+      {/* ─── Scroll spacer — creates the scroll distance for the scrub ─ */}
+      <div style={{ height: staticMode ? "100vh" : "520vh" }} aria-hidden="true" />
     </div>
   )
 }
