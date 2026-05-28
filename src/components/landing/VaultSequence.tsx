@@ -31,7 +31,6 @@ function drawCover(
     dx = (cw - dw) / 2
     dy = 0
   }
-  ctx.clearRect(0, 0, cw, ch)
   ctx.drawImage(img, dx, dy, dw, dh)
 }
 
@@ -92,14 +91,14 @@ export function VaultSequence({
     if (!ctx) return
 
     let raf = 0
-    let lastIdx = -1
+    let lastExact = -1
     let smooth = progressRef.current
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       canvas.width = Math.floor(window.innerWidth * dpr)
       canvas.height = Math.floor(window.innerHeight * dpr)
-      lastIdx = -1 // force a redraw at the new size
+      lastExact = -1 // force a redraw at the new size
     }
     resize()
     window.addEventListener("resize", resize)
@@ -115,23 +114,47 @@ export function VaultSequence({
     }
 
     const tick = () => {
-      // Ease the displayed progress toward the scroll target so a fast scroll
-      // plays through frames smoothly instead of snapping/jumping.
+      // Track the scroll tightly (responsive) with a hair of ease to kill jitter.
       const targetP = progressRef.current
-      smooth += (targetP - smooth) * 0.55
-      if (Math.abs(targetP - smooth) < 0.0004) smooth = targetP
-      const target = Math.min(
+      smooth += (targetP - smooth) * 0.85
+      if (Math.abs(targetP - smooth) < 0.0003) smooth = targetP
+
+      // Fractional frame position, e.g. 45.7 → blend frame 45 + 46
+      const exact = Math.min(
         frameCount - 1,
-        Math.max(0, Math.round(smooth * (frameCount - 1)))
+        Math.max(0, smooth * (frameCount - 1))
       )
-      const idx = nearestLoaded(target)
-      if (idx >= 0 && idx !== lastIdx) {
-        const img = images.current[idx]
-        if (img && img.complete && img.naturalWidth) {
+      if (Math.abs(exact - lastExact) < 0.0015) {
+        raf = requestAnimationFrame(tick)
+        return
+      }
+      lastExact = exact
+
+      const lo = Math.floor(exact)
+      const hi = Math.min(frameCount - 1, lo + 1)
+      const frac = exact - lo
+
+      const loIdx = nearestLoaded(lo)
+      if (loIdx >= 0) {
+        const loImg = images.current[loIdx]
+        if (loImg && loImg.complete && loImg.naturalWidth) {
           ctx.imageSmoothingEnabled = true
           ctx.imageSmoothingQuality = "high"
-          drawCover(ctx, img, canvas.width, canvas.height)
-          lastIdx = idx
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          ctx.globalAlpha = 1
+          drawCover(ctx, loImg, canvas.width, canvas.height)
+          // Crossfade the next frame on top → smooth sub-frame motion
+          if (hi !== lo && frac > 0.02) {
+            const hiIdx = nearestLoaded(hi)
+            if (hiIdx >= 0 && hiIdx !== loIdx) {
+              const hiImg = images.current[hiIdx]
+              if (hiImg && hiImg.complete && hiImg.naturalWidth) {
+                ctx.globalAlpha = frac
+                drawCover(ctx, hiImg, canvas.width, canvas.height)
+                ctx.globalAlpha = 1
+              }
+            }
+          }
         }
       }
       raf = requestAnimationFrame(tick)
